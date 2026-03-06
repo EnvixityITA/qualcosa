@@ -1,79 +1,112 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js";
+const canvas = document.getElementById("game")
+const ctx = canvas.getContext("2d")
 
-let scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87CEEB);
+canvas.width = 800
+canvas.height = 400
 
-let camera = new THREE.PerspectiveCamera(
-75,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-);
+let gravity = 0.6
+let speed = 6
 
-let renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth,window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-camera.position.set(0,10,20);
-camera.lookAt(0,0,0);
-
-const light = new THREE.DirectionalLight(0xffffff,1);
-light.position.set(10,20,10);
-scene.add(light);
-
-const ambient = new THREE.AmbientLight(0x888888);
-scene.add(ambient);
-
-function generateTerrain(){
-
-for(let x=-20;x<20;x++){
-for(let z=-20;z<20;z++){
-
-let height = Math.random()*3;
-
-const geo = new THREE.BoxGeometry(1,height+1,1);
-
-const mat = new THREE.MeshStandardMaterial({
-color:0x44aa44
-});
-
-const cube = new THREE.Mesh(geo,mat);
-
-cube.position.set(x,height/2,z);
-
-scene.add(cube);
-
+const player = {
+x:100,
+y:300,
+size:40,
+velY:0,
+jump:false
 }
-}
+
+let obstacles = [
+{x:600,y:320,size:40},
+{x:900,y:320,size:40},
+{x:1200,y:320,size:40}
+]
+
+document.addEventListener("keydown",e=>{
+
+if(e.code==="Space" && !player.jump){
+
+player.velY = -12
+player.jump = true
 
 }
 
-generateTerrain();
+})
 
-const keys={};
+function update(){
 
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
+player.velY += gravity
+player.y += player.velY
 
-function updatePlayer(){
+if(player.y > 300){
 
-let speed=0.2;
-
-if(keys["w"]) camera.position.z-=speed;
-if(keys["s"]) camera.position.z+=speed;
-if(keys["a"]) camera.position.x-=speed;
-if(keys["d"]) camera.position.x+=speed;
+player.y = 300
+player.velY = 0
+player.jump = false
 
 }
 
-function animate(){
+obstacles.forEach(o=>{
+o.x -= speed
 
-requestAnimationFrame(animate);
+if(o.x + o.size < 0){
 
-updatePlayer();
-
-renderer.render(scene,camera);
+o.x = canvas.width + Math.random()*400
 
 }
 
-animate();
+if(
+player.x < o.x + o.size &&
+player.x + player.size > o.x &&
+player.y < o.y + o.size &&
+player.y + player.size > o.y
+){
+resetGame()
+}
+
+})
+
+}
+
+function resetGame(){
+
+player.y = 300
+player.velY = 0
+
+obstacles.forEach((o,i)=>{
+o.x = 600 + i*300
+})
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle = "white"
+ctx.fillRect(0,340,800,60)
+
+ctx.fillStyle = "cyan"
+ctx.fillRect(player.x,player.y,player.size,player.size)
+
+ctx.fillStyle = "red"
+
+obstacles.forEach(o=>{
+ctx.beginPath()
+ctx.moveTo(o.x,o.y+o.size)
+ctx.lineTo(o.x+o.size/2,o.y)
+ctx.lineTo(o.x+o.size,o.y+o.size)
+ctx.fill()
+})
+
+}
+
+function gameLoop(){
+
+update()
+draw()
+
+requestAnimationFrame(gameLoop)
+
+}
+
+gameLoop()
