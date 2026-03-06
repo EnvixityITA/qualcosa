@@ -1,39 +1,28 @@
-let scene, camera, renderer;
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Infinite Disaster World</title>
+<link rel="stylesheet" href="style.css">
+</head>
 
-init();
-generateWorld();
-animate();
+<body>
 
-function init() {
+<div id="ui">
+<button onclick="meteor()">Meteor</button>
+<button onclick="earthquake()">Earthquake</button>
+<button onclick="tornado()">Tornado</button>
+</div>
 
-scene = new THREE.Scene();
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/dist/esm/simplex-noise.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cannon-es/dist/cannon-es.js"></script>
 
-camera = new THREE.PerspectiveCamera(
-75,
-window.innerWidth / window.innerHeight,
-0.1,
-1000
-);
+<script src="main.js"></script>
+<script src="player.js"></script>
+<script src="terrain.js"></script>
+<script src="biome.js"></script>
+<script src="disasters.js"></script>
 
-renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-camera.position.set(0, 40, 80);
-
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(50, 50, 50);
-scene.add(light);
-
-const ambient = new THREE.AmbientLight(0x404040);
-scene.add(ambient);
-
-}
-
-function animate() {
-
-requestAnimationFrame(animate);
-
-renderer.render(scene, camera);
-
-}
+</body>
+</html>
