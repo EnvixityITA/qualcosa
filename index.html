@@ -3,7 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>Infinite Disaster World</title>
-<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+overflow:hidden;
+background:black;
+}
+
+#ui{
+position:absolute;
+top:10px;
+left:10px;
+z-index:10;
+}
+
+button{
+padding:10px;
+margin:5px;
+}
+</style>
+
 </head>
 
 <body>
@@ -14,15 +34,7 @@
 <button onclick="tornado()">Tornado</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/dist/esm/simplex-noise.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/cannon-es/dist/cannon-es.js"></script>
-
-<script src="main.js"></script>
-<script src="player.js"></script>
-<script src="terrain.js"></script>
-<script src="biome.js"></script>
-<script src="disasters.js"></script>
+<script type="module" src="main.js"></script>
 
 </body>
 </html>
