@@ -1,26 +1,32 @@
-function spawnMeteor(){
+function meteor(){
 
-const geometry = new THREE.SphereGeometry(2,16,16);
-const material = new THREE.MeshStandardMaterial({color:0xff5500});
+const geo = new THREE.SphereGeometry(2,16,16);
+const mat = new THREE.MeshStandardMaterial({color:0xff3300});
 
-const meteor = new THREE.Mesh(geometry,material);
+const rock = new THREE.Mesh(geo,mat);
 
-meteor.position.set(
-(Math.random()-0.5)*50,
-50,
-(Math.random()-0.5)*50
+rock.position.set(
+camera.position.x + Math.random()*20-10,
+40,
+camera.position.z + Math.random()*20-10
 );
 
-scene.add(meteor);
+scene.add(rock);
 
 function fall(){
 
-meteor.position.y -= 0.5;
+rock.position.y -= 0.6;
 
-if(meteor.position.y > 0){
+if(rock.position.y > 0){
+
 requestAnimationFrame(fall);
+
 }else{
-scene.remove(meteor);
+
+explode(rock.position);
+
+scene.remove(rock);
+
 }
 
 }
@@ -29,15 +35,19 @@ fall();
 
 }
 
-
-
-function spawnEarthquake(){
+function explode(pos){
 
 scene.children.forEach(obj=>{
 
-if(obj.geometry){
+if(obj.position){
 
-obj.position.y += (Math.random()-0.5)*2;
+let dist = obj.position.distanceTo(pos);
+
+if(dist < 6){
+
+scene.remove(obj);
+
+}
 
 }
 
@@ -45,31 +55,36 @@ obj.position.y += (Math.random()-0.5)*2;
 
 }
 
+function earthquake(){
 
+scene.children.forEach(obj=>{
 
-function spawnTornado(){
+if(obj.position){
 
-const geo = new THREE.CylinderGeometry(0.5,3,10,16);
+obj.position.y += (Math.random()-0.5)*1.5;
+
+}
+
+});
+
+}
+
+function tornado(){
+
+const geo = new THREE.CylinderGeometry(1,4,12,16);
 const mat = new THREE.MeshStandardMaterial({color:0xaaaaaa});
 
-const tornado = new THREE.Mesh(geo,mat);
+const tor = new THREE.Mesh(geo,mat);
 
-tornado.position.set(
-(Math.random()-0.5)*30,
-5,
-(Math.random()-0.5)*30
-);
+tor.position.copy(camera.position);
 
-scene.add(tornado);
-
-let t = 0;
+scene.add(tor);
 
 function spin(){
 
-t += 0.1;
+tor.rotation.y += 0.3;
 
-tornado.rotation.y += 0.3;
-tornado.position.x += Math.sin(t);
+tor.position.x += Math.sin(Date.now()*0.002);
 
 requestAnimationFrame(spin);
 
@@ -78,19 +93,5 @@ requestAnimationFrame(spin);
 spin();
 
 }
-
-
-
-function spawnFlood(){
-
-scene.children.forEach(obj=>{
-
-if(obj.geometry){
-
-obj.position.y += 0.5;
-
-}
-
-});
 
 }
